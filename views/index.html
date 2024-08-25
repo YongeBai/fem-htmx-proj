@@ -8,25 +8,41 @@
     <title>Document</title>
 </head>
 <body>
-    {{ template "create-contact" . }}
-    <hr>
-    <div id="contact-list">
-        {{ template "contact-list" . }}
-    </div>
+    {{ template "create-contact" .FormData }}
+    <hr>    
+    {{ template "contact-list" .Data }}    
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        document.body.addEventListener('htmx:beforeSwap', function (evt) {
+            if (evt.detail.xhr.status == 422) {
+                evt.detail.shouldSwap = true;
+                evt.detail.isError = false;
+            }
+        })
+    });
+</script>
 </html>
 {{ end }}
 
 {{ block "create-contact" . }}  
-    <form>        
-        name: <input type="name" name="name">
-        email: <input type="email" name="email">
-        <button type="submit" hx-post="/contacts" hx-target="#contact-list">Create Contact</button>
+    <form hx-post="/contacts" hx-swap="outerHTML">        
+        name: <input {{ if .Values.name }}value="{{ .Values.name }}"{{ end }}
+        type="name" name="name">
+
+        email: <input {{ if .Values.email }}value="{{ .Values.email }}"{{ end }}
+        type="email" name="email">
+
+        {{ if .Errors.email }}
+            <div style="color: red;"> {{ .Errors.email }}</div>    
+        {{ end }}
+
+        <button type="submit">Create Contact</button>
     </form>
 {{ end }}
 
 {{ block "contact-list" . }}
-    <div style="display: flex; flex-direction: column;">
+    <div id="contact-list" style="display: flex; flex-direction: column;">
         <ul>
             {{ range .Contacts }}
                 <li>{{ .Name }} - {{ .Email }}</li>
