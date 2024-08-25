@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"html/template"
 	"io"
 	"strconv"
@@ -101,10 +101,12 @@ func CreatePage() Page {
 func main() {
 	e := echo.New()	
 	e.Use(middleware.Logger())
-
+	
 	page := CreatePage()
 	e.Renderer = NewTemplates()
-
+	e.Static("/images", "images")
+	e.Static("/css", "css")
+	
 	e.GET("/", func(c echo.Context) error {		
 		return c.Render(100, "index", page)
 	})
@@ -130,7 +132,7 @@ func main() {
 	})
 
 	e.DELETE("/contact/:id", func(c echo.Context) error {
-		time.Sleep(1 * time.Second)
+		time.Sleep(3 * time.Second)
 		idStr := c.Param("id")
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
