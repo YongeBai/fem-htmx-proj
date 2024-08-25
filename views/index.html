@@ -43,10 +43,28 @@
 
 {{ block "contact-list" . }}
     <div id="contact-list" style="display: flex; flex-direction: column;">
-        <ul>
-            {{ range .Contacts }}
-                <li>{{ .Name }} - {{ .Email }}</li>
-            {{ end }}
-        </ul>
+        {{ range .Contacts }}        
+            {{ template "contact" . }}        
+        {{ end }}
     </div>
+{{ end }}
+
+{{ block "contact" . }}
+<div id="contact-{{ .Id  }}" style="display: flex;">
+    <div hx-swap="outerHTML" hx-target="#contact-{{ .Id }}" hx-delete="/contact/{{ .Id  }}" style="width: 1rem; cursor: pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="24"
+            height="24" fill="currentColor">
+            <path d="M3 6h18v2H3z" />
+            <path d="M8 6V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v2h5v2H3V6h5zm2-2h4V4H10v2zM5 8h14l-1 12H6L5 8zm3 2h8v10H8V10z" />
+        </svg>
+    </div>
+    Name: <span>{{ .Name }}</span> 
+    Email <span>{{ .Email }}</span>
+</div>
+{{ end }}
+
+{{ block "oob-contact" . }}
+<div id="contact-list" hx-swap-oob="afterbegin">
+    {{ template "contact" . }}
+</div>
 {{ end }}
