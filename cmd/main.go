@@ -33,10 +33,16 @@ func main() {
 	count := Count{Count: 0}
 	e.Renderer = NewTemplates()
 
-	e.GET("/", func(c echo.Context) error {
-		count.Count++
+	e.GET("/", func(c echo.Context) error {		
 		return c.Render(100, "index", count)
 	})
+
+
+	e.POST("/count", func(c echo.Context) error {
+		count.Count++
+		return c.Render(200, "count", count)
+	})
+
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
