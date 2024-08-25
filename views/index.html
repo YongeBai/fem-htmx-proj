@@ -8,15 +8,29 @@
     <title>Document</title>
 </head>
 <body>
-    <div id="count">
-        {{ template "count" . }}
+    {{ template "create-contact" . }}
+    <hr>
+    <div id="contact-list">
+        {{ template "contact-list" . }}
     </div>
-    <button hx-post="/count" hx-target="#count">Increment</button>
-
 </body>
 </html>
 {{ end }}
 
-{{ block "count" . }}
-    Count {{ .Count}}
+{{ block "create-contact" . }}  
+    <form>        
+        name: <input type="name" name="name">
+        email: <input type="email" name="email">
+        <button type="submit" hx-post="/contacts" hx-target="#contact-list">Create Contact</button>
+    </form>
+{{ end }}
+
+{{ block "contact-list" . }}
+    <div style="display: flex; flex-direction: column;">
+        <ul>
+            {{ range .Contacts }}
+                <li>{{ .Name }} - {{ .Email }}</li>
+            {{ end }}
+        </ul>
+    </div>
 {{ end }}

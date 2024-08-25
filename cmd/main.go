@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/echo/v4/middleware"	
 )
 
 type Templates struct{
@@ -22,25 +22,50 @@ func NewTemplates() *Templates {
 	}
 }
 
-type Count struct {
-	Count int
+type Contact struct {
+	Name string
+	Email string
+}
+
+func CreateContact(name, email string) Contact {
+	return Contact{
+		Name: name,
+		Email: email,
+	}
+}
+
+type Contacts = []Contact
+
+type Data struct {
+	Contacts Contacts
+}
+
+func CreateData() Data {
+	return Data{
+		Contacts: Contacts{
+			CreateContact("John Doe", "jd@gmail.com"),
+			CreateContact("Kanye West", "kw@gmail.com"),
+		},
+	}
 }
 
 func main() {
 	e := echo.New()	
 	e.Use(middleware.Logger())
 
-	count := Count{Count: 0}
+	data := CreateData()	
 	e.Renderer = NewTemplates()
 
 	e.GET("/", func(c echo.Context) error {		
-		return c.Render(100, "index", count)
+		return c.Render(100, "index", data)
 	})
 
 
-	e.POST("/count", func(c echo.Context) error {
-		count.Count++
-		return c.Render(200, "count", count)
+	e.POST("/contacts", func(c echo.Context) error {
+		name := c.FormValue("name")
+		email := c.FormValue("email")
+		data.Contacts = append(data.Contacts, CreateContact(name, email))
+		return c.Render(200, "contact-list", data)
 	})
 
 
