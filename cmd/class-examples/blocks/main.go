@@ -59,7 +59,7 @@ func main() {
         return c.Render(http.StatusOK, template, Blocks{
             Start: start,
             Next: start + 10,
-            More: start + 10 < 100,
+            More: true,
             Blocks: blocks,
         });
     });
